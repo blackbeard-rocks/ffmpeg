@@ -23,9 +23,12 @@ FFMPEG_REPO="${FFMPEG_REPO:-https://github.com/FFmpeg/FFmpeg.git}"
 FFMPEG_REPO="${FFMPEG_REPO_OVERRIDE:-$FFMPEG_REPO}"
 GIT_BRANCH="${GIT_BRANCH:-master}"
 GIT_BRANCH="${GIT_BRANCH_OVERRIDE:-$GIT_BRANCH}"
+NV_VER=13.1.0
+NV_ARCH=$(uname -m | grep -q "x86" && echo "x86_64" || echo "sbsa")
 
 BUILD_SCRIPT="$(mktemp)"
 trap "rm -f -- '$BUILD_SCRIPT'" EXIT
+
 
 cat <<EOF >"$BUILD_SCRIPT"
     set -xe
@@ -35,18 +38,33 @@ cat <<EOF >"$BUILD_SCRIPT"
     git clone --filter=blob:none --branch='$GIT_BRANCH' '$FFMPEG_REPO' ffmpeg
     cd ffmpeg
 
+    git config user.email "builder@localhost" && \
+    git config user.name "Builder" && \
+    git config advice.detachedHead false
+
+    for patch in /patches/*.patch; do
+        echo "Applying \$patch"
+        git am < "\$patch"
+    done
+
+    if [[ \$VARIANT == *nvcc* ]]; then
+        CUDA_PATH="/usr/local/cuda-${NV_VER}/linux-${NV_ARCH}"
+        CUDA_HOME="/usr/local/cuda-${NV_VER}/linux-${NV_ARCH}"
+        PATH="\${PATH}:/usr/local/cuda-${NV_VER}/linux-${NV_ARCH}/bin"
+    fi
+
     ./configure --prefix=/ffbuild/prefix --pkg-config-flags="--static" \$FFBUILD_TARGET_FLAGS \$FF_CONFIGURE \
         --extra-cflags="\$FF_CFLAGS" --extra-cxxflags="\$FF_CXXFLAGS" --extra-libs="\$FF_LIBS" \
         --extra-ldflags="\$FF_LDFLAGS" --extra-ldexeflags="\$FF_LDEXEFLAGS" \
         --cc="\$CC" --cxx="\$CXX" --ar="\$AR" --ranlib="\$RANLIB" --nm="\$NM" \
-        --extra-version="\$(date +%Y%m%d)"
+        --extra-version="BlackBeard" --disable-ffplay
     make -j\$(nproc) V=1
     make install install-doc
 EOF
 
 [[ -t 1 ]] && TTY_ARG="-t" || TTY_ARG=""
 
-docker run --rm -i $TTY_ARG "${UIDARGS[@]}" -v "$PWD/ffbuild":/ffbuild -v "$BUILD_SCRIPT":/build.sh "$IMAGE" bash /build.sh
+docker run --rm -i $TTY_ARG "${UIDARGS[@]}" -v "$PWD/ffbuild":/ffbuild -v "$PWD/patches/ffmpeg":/patches -v "$BUILD_SCRIPT":/build.sh "$IMAGE" bash /build.sh
 
 if [[ -n "$FFBUILD_OUTPUT_DIR" ]]; then
     mkdir -p "$FFBUILD_OUTPUT_DIR"
