@@ -1,0 +1,18 @@
+--- configure
++++ configure
+@@ -2276,7 +2276,6 @@
+ "
+ 
+ HWACCEL_LIBRARY_NONFREE_LIST="
+-    cuda_nvcc
+     cuda_sdk
+     libnpp
+ "
+@@ -2288,6 +2287,7 @@
+     mmal
+     omx
+     opencl
++    cuda_nvcc
+ "
+ 
+ DOCUMENT_LIST="
