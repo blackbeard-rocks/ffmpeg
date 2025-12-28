@@ -1,0 +1,9 @@
+--- FFmpeg.orig/configure
++++ FFmpeg/configure
+@@ -1,4 +1,4 @@
+ #!/bin/sh
+-#
++# BlackBeard
+ # FFmpeg configure script
+ #
+ 

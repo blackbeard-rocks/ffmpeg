@@ -1,0 +1,19 @@
+index 785e23fb16..e5008a7370 100755
+--- configure
++++ configure
+@@ -2194,7 +2194,6 @@ EXTRALIBS_LIST="
+ "
+ 
+ HWACCEL_LIBRARY_NONFREE_LIST="
+-    cuda_nvcc
+     cuda_sdk
+ "
+ 
+@@ -2204,6 +2203,7 @@ HWACCEL_LIBRARY_LIST="
+     libvpl
+     mmal
+     opencl
++    cuda_nvcc
+ "
+ 
+ DOCUMENT_LIST="
