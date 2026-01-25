@@ -17,8 +17,6 @@ on:
         type: boolean
         default: false
         required: false
-  schedule:
-    - cron: "0 12 * * *"
 
 env:
   DOCKER_BUILDKIT: 1
@@ -190,7 +188,15 @@ jobs:
       fail-fast: false
       matrix:
         target: [win64, winarm64, linux64, linuxarm64]
-        variant: [nonfree, nonfree 8.0, nonfree 7.1]
+        variant:
+          [
+            gpl,
+            gpl 8.0,
+            gpl 7.1,
+            nonfree nvcc,
+            nonfree nvcc 8.0,
+            nonfree nvcc 7.1,
+          ]
     steps:
       - name: Free Disk-Space
         run: df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /opt/ghc /usr/local/.ghcup /usr/local/lib/android && df -h
@@ -256,7 +262,15 @@ jobs:
       fail-fast: false
       matrix:
         target: [win64, winarm64, linux64, linuxarm64]
-        variant: [nonfree, nonfree 8.0, nonfree 7.1]
+        variant:
+          [
+            gpl,
+            gpl 8.0,
+            gpl 7.1,
+            nonfree nvcc,
+            nonfree nvcc 8.0,
+            nonfree nvcc 7.1,
+          ]
     steps:
       - name: Free Disk-Space
         run: df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /opt/ghc /usr/local/.ghcup /usr/local/lib/android && df -h

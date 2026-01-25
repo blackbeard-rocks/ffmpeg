@@ -12,7 +12,7 @@ ffbuild_dockerbuild() {
     # Kill build of unused and broken tools
     echo > libvmaf/tools/meson.build
 
-    wget -q -O - https://github.com/AutoCRF/vmaf/pull/3.patch | git apply
+
 
     mkdir build && cd build
 
@@ -29,8 +29,6 @@ ffbuild_dockerbuild() {
     )
 
     if [[ $TARGET == win* || $TARGET == linux* ]]; then
-        sed -i '/exe_wrapper/d' /cross.meson
-        sed -i '/^\[binaries\]/a cuda = '"'nvcc'"'' /cross.meson
 
         # ---- Install ffmpeg NVIDIA headers ----
         wget https://github.com/FFmpeg/nv-codec-headers/archive/${NV_CODEC_TAG}.zip && unzip ${NV_CODEC_TAG}.zip
@@ -41,18 +39,44 @@ ffbuild_dockerbuild() {
         cd ..
 
         # ---- Add cuda to meson config ----
-        export NVCC_APPEND_FLAGS="-ccbin=/usr/bin/gcc-12"
         myconf+=(
             --cross-file=/cross.meson
             -Denable_cuda=true
-            -Denable_nvcc=true
+            -Denable_nvcc=false
         )
+
+        NV_VER=12.9.1
+        NV_ARCH=$(uname -m | grep -q "x86" && echo "x86_64" || echo "aarch64")
+
+        # ---- NVCC config ----
+        if [[ $ADDINS_STR == *nvcc* ]]; then
+            #echo "NO!!!!" && exit 1
+            wget -q -O - https://github.com/AutoCRF/vmaf/pull/3.patch | git apply
+
+            sed -i '/exe_wrapper/d' /cross.meson
+            sed -i '/^\[binaries\]/a cuda = '"'nvcc'"'' /cross.meson
+
+            export NVCC_APPEND_FLAGS="-ccbin=/usr/bin/gcc-12"
+            
+	    NV_VER=13.1.0
+	    NV_ARCH=$(uname -m | grep -q "x86" && echo "x86_64" || echo "sbsa")
+
+            myconf+=(
+                -Denable_nvcc=true
+            )
+
+        fi
     else
         echo "Unknown target"
         return -1
     fi
 
-    CFLAGS+=" -I../include" meson "${myconf[@]}" ../libvmaf/build ../libvmaf || cat ../libvmaf/build/meson-logs/meson-log.txt
+
+    CUDA_PATH="/usr/local/cuda-${NV_VER}/linux-${NV_ARCH}"
+    CUDA_HOME="/usr/local/cuda-${NV_VER}/linux-${NV_ARCH}"
+    PATH="${PATH}:/usr/local/cuda-${NV_VER}/linux-${NV_ARCH}/bin"
+
+    CFLAGS+=" -I../include -I/usr/local/include" meson "${myconf[@]}" ../libvmaf/build ../libvmaf || cat ../libvmaf/build/meson-logs/meson-log.txt
 
     ninja -j"$(nproc)" -C ../libvmaf/build
     DESTDIR="$FFBUILD_DESTDIR" ninja install -C ../libvmaf/build
@@ -62,7 +86,7 @@ ffbuild_dockerbuild() {
 
 ffbuild_configure() {
     (( $(ffbuild_ffver) >= 501 )) || return 0
-    echo "--enable-libvmaf --enable-cuda-nvcc"
+    echo "--enable-libvmaf"
 }
 
 ffbuild_unconfigure() {

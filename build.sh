@@ -36,7 +36,12 @@ cat <<EOF >"$BUILD_SCRIPT"
     git clone --filter=blob:none --branch='$GIT_BRANCH' '$FFMPEG_REPO' ffmpeg
     cd ffmpeg
 
-    patch -p0 < <(curl https://gist.githubusercontent.com/lawrencecurtis/c10aaa0ab26335af1be67cdb08593018/raw/configure_changes.diff)
+    if [[ \$ADDINS_STR == *nvcc* ]]; then
+	patch -p0 < <(curl https://gist.githubusercontent.com/lawrencecurtis/c10aaa0ab26335af1be67cdb08593018/raw/93fca2cf8abbd7635a9f01ed629787cc260e10a2/configure_changes.diff)
+        CUDA_PATH="/usr/local/cuda-${NV_VER}/linux-${NV_ARCH}"
+        CUDA_HOME="/usr/local/cuda-${NV_VER}/linux-${NV_ARCH}"
+        PATH="\${PATH}:/usr/local/cuda-${NV_VER}/linux-${NV_ARCH}/bin"
+    fi
 
     ./configure --prefix=/ffbuild/prefix --pkg-config-flags="--static" \$FFBUILD_TARGET_FLAGS \$FF_CONFIGURE \
         --extra-cflags="\$FF_CFLAGS" --extra-cxxflags="\$FF_CXXFLAGS" --extra-libs="\$FF_LIBS" \
