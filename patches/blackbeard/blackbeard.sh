@@ -3,7 +3,7 @@ if [[ "$TARGET" != "winarm64" && "$STAGENAME" == *vmaf ]]; then
     myconf+=(
         --cross-file=/cross.meson
         -Denable_asm=true
-        -Dc_args="-DVMAF_PICTURE_POOL -DOC_NEW_STYLE_INCLUDES ${CFLAGS}"
+        -Dc_args="-DUSE_DIRECT_READ -DVMAF_BATCH_THREADING -DOC_NEW_STYLE_INCLUDES ${CFLAGS}"
     )
 
     # NVCC
