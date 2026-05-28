@@ -6,6 +6,7 @@ if [[ $# -lt 2 ]]; then
     exit -1
 fi
 
+# RELEASE_DIR is an absolute path, so it will still work when we cd into subdirectories
 RELEASE_DIR="$(realpath "$1")"
 shift
 mkdir -p "$RELEASE_DIR"
@@ -50,25 +51,30 @@ while [[ $# -gt 0 ]]; do
             ONAME="ffmpeg-$TAGNAME-$(cut -d- -f3- <<<"$INAME")"
         fi
 
-        if [[ "$INAME" != "$ONAME" ]]; then
-            mv "$INAME" "$ONAME"
-        fi
+        # --- CHANGED SECTION ---
+        # Instead of moving the directory, we cd into it.
+        # This makes its contents the root of our new archive.
+        cd "$INAME"
 
+        # Archive the contents of the current directory (.)
         if [[ $INPUT == *.zip ]]; then
-            zip -9 -r "$RELEASE_DIR/$ONAME.zip" "$ONAME"
+            zip -9 -r "$RELEASE_DIR/$ONAME.zip" .
         elif [[ $INPUT == *.tar.xz ]]; then
-            tar cvJf "$RELEASE_DIR/$ONAME.tar.xz" "$ONAME"
+            tar cvJf "$RELEASE_DIR/$ONAME.tar.xz" .
         fi
+        # -----------------------
 
+        # We don't need to cd back out because the subshell ends here 
+        # and the cleanup will handle the rest.
         rm -rf "$REPACK_DIR"
     ) &
 
     while [[ $(jobs | wc -l) -gt 3 ]]; do
-        wait %1
+        wait -n
     done
 done
 
 while [[ $(jobs | wc -l) -gt 0 ]]; do
-    wait %1
+    wait -n
 done
 rm -rf repack_dir
