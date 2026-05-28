@@ -2,8 +2,8 @@
 SCRIPT_REPO="https://github.com/Netflix/vmaf.git"
 SCRIPT_COMMIT=$(git ls-remote $SCRIPT_REPO | grep "HEAD" | awk '{print $1}')
 
-SYCL_REPO="https://github.com/lusoris/vmaf.git"
-SYCL_COMMIT=$(git ls-remote $SYCL_REPO | grep "HEAD" | awk '{print $1}')
+# SYCL_REPO="https://github.com/lusoris/vmaf.git"
+# SYCL_COMMIT=$(git ls-remote $SYCL_REPO | grep "HEAD" | awk '{print $1}')
 
 ffbuild_enabled() {
     return 0
@@ -21,21 +21,21 @@ ffbuild_depends() {
     fi
 }
 
-ffbuild_dockerdl() {
-    default_dl netflix
-    echo "git-mini-clone \"$SYCL_REPO\" \"$SYCL_COMMIT\" lusoris"
-}
+# ffbuild_dockerdl() {
+    # default_dl netflix
+    # echo "git-mini-clone \"$SYCL_REPO\" \"$SYCL_COMMIT\" lusoris"
+# }
 
 ffbuild_dockerstage() {
     to_df "RUN --mount=src=${SELF},dst=/stage.sh --mount=src=${SELFCACHE},dst=/cache.tar.xz --mount=src=patches/blackbeard,dst=/patches run_stage /stage.sh"
 }
 
 ffbuild_dockerbuild() {
-    if [[ "$ADDINS_STR" == *lusoris* || "$ADDINS_STR" == *vulkan* ]]; then
-        cd lusoris
-    else
-        cd netflix
-    fi
+    # if [[ "$ADDINS_STR" == *lusoris* || "$ADDINS_STR" == *vulkan* ]]; then
+        # cd lusoris
+    # else
+        # cd netflix
+    # fi
 
     # Kill build of unused and broken tools
     echo >libvmaf/tools/meson.build
