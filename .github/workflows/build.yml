@@ -199,10 +199,10 @@ jobs:
         target: [win64, linux64, linuxarm64]
         variant:
           [
-            gpl blackbeard nvcc,
+            gpl 9.0 blackbeard nvcc,
+            gpl 9.0 blackbeard nvcc-legacy,
             gpl 8.1 blackbeard nvcc,
-            gpl-shared 8.1 blackbeard nvcc,
-            gpl-shared 8.1 blackbeard nvcc-legacy,
+            gpl 8.1 blackbeard nvcc-legacy,
           ]
     steps:
       - name: Free Disk-Space
@@ -271,10 +271,10 @@ jobs:
         target: [win64, linux64, linuxarm64]
         variant:
           [
-            gpl blackbeard nvcc,
+            gpl 9.0 blackbeard nvcc,
+            gpl 9.0 blackbeard nvcc-legacy,
             gpl 8.1 blackbeard nvcc,
-            gpl-shared 8.1 blackbeard nvcc,
-            gpl-shared 8.1 blackbeard nvcc-legacy,
+            gpl 8.1 blackbeard nvcc-legacy,
           ]
     steps:
       - name: Free Disk-Space
