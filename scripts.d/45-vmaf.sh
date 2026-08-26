@@ -69,7 +69,7 @@ ffbuild_dockerbuild() {
 }
 
 ffbuild_configure() {
-    (( $(ffbuild_ffver) >= 501 )) || return 0
+    (($(ffbuild_ffver) >= 501)) || return 0
     echo --enable-libvmaf
 }
 
