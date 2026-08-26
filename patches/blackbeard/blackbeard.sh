@@ -17,7 +17,8 @@ if [[ "$STAGENAME" == *vmaf ]]; then
         elif [[ "$ADDINS_STR" == *nvcc* && "$ADDINS_STR" != *sycl* ]]; then
             git apply -v /patches/vmaf/nvcc.patch
         fi
-        # curl -sL "https://github.com/Netflix/vmaf/compare/master...gedoensmax:vmaf:vmafv1_cuda.patch" | git apply -v
+        curl -sL "https://github.com/Netflix/vmaf/compare/master...samfrazerdutton:cambi-cuda.patch" | git apply -v
+        curl -sL "https://github.com/Netflix/vmaf/compare/master...samfrazerdutton:speed-cuda.patch" | git apply -v
         cd build || exit
     fi
 
