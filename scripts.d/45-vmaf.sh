@@ -1,7 +1,7 @@
 #!/bin/bash
 
-SCRIPT_REPO="https://github.com/lawrencecurtis/vmaf.git"
-SCRIPT_COMMIT="23e072f72617fb7e308b1eebcfc943836dfc336e"
+SCRIPT_REPO="https://github.com/Netflix/vmaf.git"
+SCRIPT_COMMIT="f85a853692a8c730d0270cd733c8bb30b5b93b7c"
 
 ffbuild_enabled() {
     return 0
