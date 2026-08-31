@@ -23,12 +23,18 @@ ffbuild_dockerbuild() {
         git am < "$patch"
     done
 
+
     mkdir cmbuild && cd cmbuild
 
     # Workaround broken build system
     export CFLAGS="$CFLAGS -pthread -I/opt/ffbuild/include/libvmaf"
+    
+    # Force the linker to include the system dynamic library (libdl) to satisfy 
+    # undefined references from the statically linked libvmaf.
+    export LDFLAGS="$LDFLAGS -ldl"
 
     cmake -DCMAKE_TOOLCHAIN_FILE="$FFBUILD_CMAKE_TOOLCHAIN" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$FFBUILD_PREFIX" -DBUILD_SHARED_LIBS=OFF -DENABLE_EXAMPLES=NO -DENABLE_TESTS=NO -DENABLE_TOOLS=NO -DCONFIG_TUNE_VMAF=1 ..
+
     make -j$(nproc)
     make install DESTDIR="$FFBUILD_DESTDIR"
 
