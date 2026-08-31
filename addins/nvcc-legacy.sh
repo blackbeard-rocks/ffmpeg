@@ -1,5 +1,5 @@
 #!/bin/bash
-FF_CONFIGURE="${FF_CONFIGURE} --enable-cuda-nvcc  --enable-libnpp"
+FF_CONFIGURE="${FF_CONFIGURE} --enable-cuda-nvcc"
 NV_ARCH=$(uname -m | grep -q "x86" && echo "x86_64" || echo "aarch64")
 NV_VER="12.9.1"
 
