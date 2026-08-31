@@ -63,9 +63,11 @@ ffbuild_dockerbuild() {
     meson "${myconf[@]}" ../libvmaf ../libvmaf/build || cat ../libvmaf/build/meson-logs/meson-log.txt
     ninja -j"$(nproc)" -C ../libvmaf/build
 
-    DESTDIR="$FFBUILD_DESTDIR" ninja install -C ../libvmaf/build
+        DESTDIR="$FFBUILD_DESTDIR" ninja install -C ../libvmaf/build
 
-    sed -i 's/Libs.private:/Libs.private: -lstdc++/; t; $ a Libs.private: -lstdc++' "$FFBUILD_DESTPREFIX"/lib/pkgconfig/libvmaf.pc
+    # Append -lstdc++ and -ldl to Libs.private to resolve dynamic loading (dlsym/dlclose) 
+    # references required by libvmaf's CUDA integration when statically linked.
+    sed -i 's/Libs.private:/Libs.private: -lstdc++ -ldl/; t; $ a Libs.private: -lstdc++ -ldl' "$FFBUILD_DESTPREFIX"/lib/pkgconfig/libvmaf.pc
 }
 
 ffbuild_configure() {
