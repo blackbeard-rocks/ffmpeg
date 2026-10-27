@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SCRIPT_REPO="https://github.com/Netflix/vmaf.git"
-SCRIPT_COMMIT="f712fa7564fe49b12991d83920b83573af2ae063"
+SCRIPT_COMMIT="74f930d17de8c58e7c2ce55e2b897b0030ebd8ef"
 
 ffbuild_enabled() {
     return 0
@@ -10,6 +10,7 @@ ffbuild_enabled() {
 ffbuild_depends() {
     echo base
     echo ffnvcodec
+    echo zimg
 }
 
 ffbuild_dockerstage() {
