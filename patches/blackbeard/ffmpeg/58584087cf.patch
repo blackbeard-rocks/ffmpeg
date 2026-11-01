@@ -10,7 +10,7 @@ Signed-off-by: Kyle Swanson <kswanson@netflix.com>
  2 files changed, 52 insertions(+), 12 deletions(-)
 
 diff --git a/configure b/configure
-index 6fb518795dd..df80cf5fa17 100755
+index 6fb518795dd13..df80cf5fa17f4 100755
 --- a/configure
 +++ b/configure
 @@ -2659,6 +2659,7 @@ HAVE_LIST="
@@ -30,7 +30,7 @@ index 6fb518795dd..df80cf5fa17 100755
  enabled libvo_amrwbenc    && { check_pkg_config libvo_amrwbenc vo-amrwbenc vo-amrwbenc/enc_if.h E_IF_init ||
                                 require libvo_amrwbenc vo-amrwbenc/enc_if.h E_IF_init -lvo-amrwbenc; }
 diff --git a/libavfilter/vf_libvmaf.c b/libavfilter/vf_libvmaf.c
-index 46aa377f8f3..851b0982f02 100644
+index 46aa377f8f36d..851b0982f028c 100644
 --- a/libavfilter/vf_libvmaf.c
 +++ b/libavfilter/vf_libvmaf.c
 @@ -106,6 +106,44 @@ static enum VmafPixelFormat pix_fmt_map(enum AVPixelFormat av_pix_fmt)
@@ -87,11 +87,11 @@ index 46aa377f8f3..851b0982f02 100644
  #else
 -    return copy_picture_data(src, dst, bpc);
 +    int err = copy_picture_data(src, dst, bpc);
- #endif
++#endif
 +#if HAVE_LIBVMAF_PICTURE_CONVERT
 +    if (!err)
 +        dst->color = color_map(src);
-+#endif
+ #endif
 +    return err;
  }
  
@@ -125,6 +125,3 @@ index 46aa377f8f3..851b0982f02 100644
      err = vmaf_init(&s->vmaf, cfg);
      if (err)
          return AVERROR(EINVAL);
--- 
-2.54.0
-
