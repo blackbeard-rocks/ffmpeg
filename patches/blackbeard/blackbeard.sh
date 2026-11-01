@@ -46,8 +46,8 @@ elif [[ -z "$STAGENAME" ]]; then
         git apply -v "$BASE/winarm64.patch"
     fi
 
-    sed '/^    iokit$/d' "$BASE/../179d083.patch" | git apply -C1 --recount -v
-    sed '/^    iokit$/d' "$BASE/../58584087cf.patch" | git apply -C1 --recount -v
+    sed '/iokit/d' "$BASE/../179d083.patch" | git apply -C1 --recount -v
+    sed '/iokit/d' "$BASE/../58584087cf.patch" | git apply -C1 --recount -v
 
 
     if [[ -d "$FFBUILD_PREFIX/bundle" ]]; then
