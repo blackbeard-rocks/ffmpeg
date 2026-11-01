@@ -46,8 +46,8 @@ elif [[ -z "$STAGENAME" ]]; then
         git apply -v "$BASE/winarm64.patch"
     fi
 
-    git apply -C1 -v "$BASE/../179d083.patch"
-    git apply -C1 -v "$BASE/../58584087cf.patch"
+    patch -p1 -F2 < "$BASE/../179d083.patch"
+    patch -p1 -F2 < "$BASE/../58584087cf.patch"
 
     if [[ -d "$FFBUILD_PREFIX/bundle" ]]; then
         cp -rav "$FFBUILD_PREFIX/bundle" /ffbuild/prefix/
